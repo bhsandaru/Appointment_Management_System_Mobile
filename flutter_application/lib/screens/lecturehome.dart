@@ -94,7 +94,7 @@ class _LectureHomeState extends State<LectureHome> {
     }
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 11, 182, 229),
+        backgroundColor: const Color.fromARGB(255, 8, 127, 161),
         title: Text(
           user['fullName'],
           style: const TextStyle(fontSize: 16),
@@ -107,7 +107,7 @@ class _LectureHomeState extends State<LectureHome> {
             Container(
               height: 100,
               decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 59, 184, 218),
+                color: Color.fromARGB(255, 33, 120, 141),
               ),
               child: const Center(
                 child: Text(
@@ -173,7 +173,7 @@ class _LectureHomeState extends State<LectureHome> {
                             children: [
                               Chip(
                                 label: Text('Scheduled Appointments'),
-                                backgroundColor: Color(0xFFC5ECF1),
+                                backgroundColor: Color(0xFFE1F4F8),
                                 labelStyle: TextStyle(fontSize: 16),
                               ),
                               // if (isStudent)
