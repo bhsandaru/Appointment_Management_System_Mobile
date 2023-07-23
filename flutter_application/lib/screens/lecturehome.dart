@@ -123,7 +123,7 @@ class _LectureHomeState extends State<LectureHome> {
             ListTile(
               title: const Padding(
                 padding: EdgeInsets.only(left: 16),
-                child: Text('Search Lecturer'),
+                child: Text('Acedemic Staff'),
               ),
               onTap: () {
                 Navigator.push(

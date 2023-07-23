@@ -39,6 +39,8 @@ dependencies:
   table_calendar: ^3.0.9
   shared_preferences: ^2.0.8
   localstorage: ^4.0.1+2
+
+  easy_search_bar: ^2.5.0
    
   
   image_picker: ^0.8.8

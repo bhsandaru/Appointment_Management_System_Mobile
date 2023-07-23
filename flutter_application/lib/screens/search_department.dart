@@ -62,11 +62,54 @@ class _SearchDepartmentState extends State<SearchDepartment>
     _animationController.reverse();
   }
 
+  Widget buildDepartmentButton(String departmentName, String routeName, double minWidth) {
+    return Expanded(
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: InkWell(
+          onTap: () {
+            Navigator.pushNamed(context, routeName);
+          },
+          onHighlightChanged: (isHighlighted) {
+            setState(() {
+              _isButtonHighlighted = isHighlighted;
+              if (isHighlighted) {
+                _startButtonAnimation();
+              } else {
+                _stopButtonAnimation();
+              }
+            });
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                colors: [
+                  Color.fromARGB(245, 4, 239, 235),
+                  Color.fromARGB(255, 17, 209, 226),
+                  Color.fromARGB(255, 44, 249, 242),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            constraints: BoxConstraints(minWidth: minWidth),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Text(
+              departmentName,
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.cyan[700],
+        backgroundColor: Colors.cyan[700], // Use the same app bar color as in LoginPage
         title: Text(
           user != null ? user['fullName'] : '',
           style: const TextStyle(fontSize: 16),
@@ -82,124 +125,40 @@ class _SearchDepartmentState extends State<SearchDepartment>
         padding: const EdgeInsets.only(top: 35),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Chip(
-                label: const Text(
-                  'Departments',
-                  style: TextStyle(fontSize: 16),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Chip(
+                  label: const Text(
+                    'Academic Staff',
+                    style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
+                  ),
+                  backgroundColor: const Color.fromARGB(255, 5, 101, 114),
+                  labelStyle: const TextStyle(color: Colors.white),
                 ),
-                backgroundColor: Colors.cyan[500],
-                labelStyle: const TextStyle(color: Colors.white),
               ),
             ),
-            const SizedBox(height: 50), // Adding a 50px gap
+            const SizedBox(height: 15), // Adding 15px vertical spacing
 
-            Expanded(
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  Center(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/page1');
-                      },
-                      onHighlightChanged: (isHighlighted) {
-                        setState(() {
-                          _isButtonHighlighted = isHighlighted;
-                          if (isHighlighted) {
-                            _startButtonAnimation();
-                          } else {
-                            _stopButtonAnimation();
-                          }
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        decoration: BoxDecoration(
-                          color: _isButtonHighlighted
-                              ? _buttonColorAnimation.value
-                              : Colors.cyan[500],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        child: const Text(
-                          'Department of Civil and Environmental Engineering',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Center(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/searchDepartmentElec');
-                      },
-                      onHighlightChanged: (isHighlighted) {
-                        setState(() {
-                          _isButtonHighlighted = isHighlighted;
-                          if (isHighlighted) {
-                            _startButtonAnimation();
-                          } else {
-                            _stopButtonAnimation();
-                          }
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        decoration: BoxDecoration(
-                          color: _isButtonHighlighted
-                              ? _buttonColorAnimation.value
-                              : Colors.cyan[500],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        child: const Text(
-                          'Department of Electrical and Environmental Engineering',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Center(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/page3');
-                      },
-                      onHighlightChanged: (isHighlighted) {
-                        setState(() {
-                          _isButtonHighlighted = isHighlighted;
-                          if (isHighlighted) {
-                            _startButtonAnimation();
-                          } else {
-                            _stopButtonAnimation();
-                          }
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        decoration: BoxDecoration(
-                          color: _isButtonHighlighted
-                              ? _buttonColorAnimation.value
-                              : Colors.cyan[500],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 12),
-                        child: const Text(
-                          'Department of Mechanical and Manufacturing Engineering',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            buildDepartmentButton(
+              'Department of Civil and Environmental Engineering',
+              '/page1',
+              600,
+            ),
+            const SizedBox(height: 15), // Adding 15px vertical spacing
+            buildDepartmentButton(
+              'Department of Electrical and Environmental Engineering',
+              '/searchDepartmentElec',
+              600,
+            ),
+            const SizedBox(height: 15), // Adding 15px vertical spacing
+            buildDepartmentButton(
+              'Department of Mechanical and Manufacturing Engineering',
+              '/page3',
+              600,
             ),
           ],
         ),

@@ -3,30 +3,30 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ViewElecLecturer extends StatefulWidget {
+class ViewElecInstructors extends StatefulWidget {
   @override
-  _ViewElecLecturerState createState() => _ViewElecLecturerState();
+  _ViewElecInstructorsState createState() => _ViewElecInstructorsState();
 }
 
-class _ViewElecLecturerState extends State<ViewElecLecturer> {
-  List<dynamic> lec = [];
+class _ViewElecInstructorsState extends State<ViewElecInstructors> {
+  List<dynamic> instructors = [];
   Map<String, dynamic> users = {};
   dynamic user;
 
   @override
   void initState() {
     super.initState();
-    getUsers();
+    getInstructors();
     getUser();
   }
 
-  void getUsers() async {
+  void getInstructors() async {
     try {
       final response =
           await http.get(Uri.parse("http://localhost:8080/api/users/"));
       if (response.statusCode == 200) {
         setState(() {
-          lec = json.decode(response.body);
+          instructors = json.decode(response.body);
         });
       } else {
         throw Exception('Failed to fetch data');
@@ -67,7 +67,7 @@ class _ViewElecLecturerState extends State<ViewElecLecturer> {
     }
   }
 
-  void getLec(String data) async {
+  void getInstructor(String data) async {
     try {
       final response = await http
           .get(Uri.parse("http://localhost:8080/api/users/getOne/$data"));
@@ -75,11 +75,11 @@ class _ViewElecLecturerState extends State<ViewElecLecturer> {
         final userData = json.decode(response.body);
         // Store user data in local storage
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('Lec', json.encode(userData));
+        await prefs.setString('Instructor', json.encode(userData));
 
         setState(() {
           users = userData;
-          Navigator.pushNamed(context, '/viewLecturerPage');
+          Navigator.pushNamed(context, '/viewElecInstructorPage');
         });
       } else {
         throw Exception('Failed to fetch data');
@@ -119,14 +119,14 @@ class _ViewElecLecturerState extends State<ViewElecLecturer> {
         ),
       ),
       body: ListView.builder(
-        itemCount: lec.length,
+        itemCount: instructors.length,
         itemBuilder: (BuildContext context, int index) {
-          final item = lec[index];
-          if (item['role'] == 'Lecturer' &&
+          final item = instructors[index];
+          if (item['role'] == 'Instructor' &&
               item['department'] ==
                   'Department of Electrical and Information Engineering') {
             return GestureDetector(
-              onTap: () => getLec(item['email']),
+              onTap: () => getInstructor(item['email']),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Center(
@@ -150,7 +150,7 @@ class _ViewElecLecturerState extends State<ViewElecLecturer> {
                       ),
                       Text(item['email']),
                       ElevatedButton(
-                        onPressed: () => getLec(item['email']),
+                        onPressed: () => getInstructor(item['email']),
                         child: Text('View Details'),
                       ),
                     ],

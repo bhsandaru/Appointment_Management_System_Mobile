@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'view_elec_lecturers.dart';
+import 'view_elec_instructors.dart';
 
 class SearchDepartmentElec extends StatefulWidget {
   const SearchDepartmentElec({Key? key}) : super(key: key);
@@ -15,6 +18,35 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
   late AnimationController _animationController;
   late Animation<Color?> _buttonColorAnimation;
   bool _isButtonHighlighted = false;
+  bool _showSearchBar = false;
+
+  List<Map<String, dynamic>> lecturerData = [
+    {
+      'fullName': 'Dr. Thilina Weerasinghe',
+      'email': 'john.doe@example.com',
+      'imageURL':
+          'https://media.licdn.com/dms/image/C5603AQHV1uGlMl9ViA/profile-displayphoto-shrink_800_800/0/1593104293459?e=1695859200&v=beta&t=b8-haKHKgiPRzuvgjzGHaXv_QkUXNjCyRprxkxNaAy4',
+    },
+    {
+      'fullName': 'Dr.Kushan Sudheera',
+      'email': 'jane.smith@example.com',
+      'imageURL':
+          'https://media.licdn.com/dms/image/C5103AQGpB_533scU9A/profile-displayphoto-shrink_800_800/0/1530624791993?e=1695859200&v=beta&t=MgAenqrNTNfpWUGsLCPkgZl0po25AFKAfbfTCLYtbg0',
+    },
+    {
+      'fullName': 'Mr.Manuj Wejeyrathne',
+      'email': 'jane.smith@example.com',
+      'imageURL':
+          'https://media.licdn.com/dms/image/C5603AQG5yoaNkgRp0A/profile-displayphoto-shrink_800_800/0/1637057801674?e=1695859200&v=beta&t=yRNAd6_HE60sG0zC17wLF3MjenLSoNwUer36nzJyNSQ',
+    },
+    {
+      'fullName': 'Dr. Jane Smith',
+      'email': 'jane.smith@example.com',
+      'imageURL':
+          'https://media.licdn.com/dms/image/C5103AQGpB_533scU9A/profile-displayphoto-shrink_800_800/0/1530624791993?e=1695859200&v=beta&t=MgAenqrNTNfpWUGsLCPkgZl0po25AFKAfbfTCLYtbg0',
+    },
+    // Add more lecturer data here
+  ];
 
   @override
   void initState() {
@@ -62,11 +94,17 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
     _animationController.reverse();
   }
 
+  void _toggleSearchBar() {
+    setState(() {
+      _showSearchBar = !_showSearchBar;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.cyan[700],
+        backgroundColor: Colors.cyan[700], // Use the same app bar color as in LoginPage
         title: Text(
           user != null ? user['fullName'] : '',
           style: const TextStyle(fontSize: 16),
@@ -77,96 +115,98 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
             Navigator.pop(context);
           },
         ),
+        actions: [
+          IconButton(
+            onPressed: _toggleSearchBar, // Toggle the search bar
+            icon: Icon(Icons.search),
+          ),
+        ],
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 16), // Adding space above the Chip
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Chip(
-              label: const Text(
-                'Department of Electrical and Information Engineering',
-                style: TextStyle(fontSize: 16),
+          Container(
+            color: Colors.cyan[700], // Use the same color for the top section as in LoginPage
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Department of Electrical and Information Engineering',
+                      style: TextStyle(fontSize: 18, color: Colors.white), // Use white text color
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _toggleSearchBar, // Toggle the search bar
+                    icon: Icon(Icons.search),
+                  ),
+                ],
               ),
-              backgroundColor: Colors.cyan[500],
-              labelStyle: const TextStyle(color: Colors.white),
             ),
           ),
-          const SizedBox(height: 50), // Adding a 50px gap
-
-          Expanded(
-            child: ListView(
-              shrinkWrap: true,
+          Container(
+            color: Colors.cyan[700], // Use the same color for the button section as in LoginPage
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Center(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/viewElecLecturer');
-                    },
-                    onHighlightChanged: (isHighlighted) {
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
                       setState(() {
-                        _isButtonHighlighted = isHighlighted;
-                        if (isHighlighted) {
-                          _startButtonAnimation();
-                        } else {
-                          _stopButtonAnimation();
-                        }
+                        _isButtonHighlighted = true;
                       });
+                      _navigateToViewElecLecturer();
                     },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      decoration: BoxDecoration(
-                        color: _isButtonHighlighted
-                            ? _buttonColorAnimation.value
-                            : Colors.cyan[500],
-                        borderRadius: BorderRadius.circular(8),
+                    style: ElevatedButton.styleFrom(
+                      primary: _isButtonHighlighted
+                          ? _buttonColorAnimation.value
+                          : Colors.cyan[500],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      child: const Text(
-                        'Lecturers',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    child: const Text(
+                      'Lecturers',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                Center(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/page2');
-                    },
-                    onHighlightChanged: (isHighlighted) {
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
                       setState(() {
-                        _isButtonHighlighted = isHighlighted;
-                        if (isHighlighted) {
-                          _startButtonAnimation();
-                        } else {
-                          _stopButtonAnimation();
-                        }
+                        _isButtonHighlighted = false;
                       });
+                      _navigateToPage2();
                     },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      decoration: BoxDecoration(
-                        color: _isButtonHighlighted
-                            ? _buttonColorAnimation.value
-                            : Colors.cyan[500],
-                        borderRadius: BorderRadius.circular(8),
+                    style: ElevatedButton.styleFrom(
+                      primary: _isButtonHighlighted
+                          ? Colors.cyan[500]
+                          : _buttonColorAnimation.value,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      child: const Text(
-                        'Instructors',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                    child: const Text(
+                      'Instructors',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -174,8 +214,69 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
               ],
             ),
           ),
+          if (_showSearchBar)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search Lecturers',
+                  suffixIcon: Icon(Icons.search),
+                ),
+                onChanged: (value) {
+                  // Implement the search functionality here
+                },
+              ),
+            ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: lecturerData.length,
+              itemBuilder: (context, index) {
+                final lecturer = lecturerData[index];
+                return Card(
+                  child: SizedBox(
+                    width: 250,
+                    height: 300,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 8),
+                        CircleAvatar(
+                          radius: 100, // Adjust the radius to your preference
+                          backgroundImage: NetworkImage(lecturer['imageURL']),
+                        ),
+                        ListTile(
+                          title: Text(
+                            lecturer['fullName'],
+                            textAlign: TextAlign.center,
+                          ),
+                          subtitle: Text(
+                            lecturer['email'],
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Handle view details button click
+                          },
+                          child: Text('View Details'),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  void _navigateToViewElecLecturer() {
+    Navigator.pushNamed(context, '/viewElecLecturer');
+  }
+
+  void _navigateToPage2() {
+    Navigator.pushNamed(context, '/viewElecInstructor');
   }
 }
