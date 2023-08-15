@@ -5,6 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'view_elec_lecturers.dart';
 import 'view_elec_instructors.dart';
 
+import 'view_lecture_page.dart'; // Make sure to import the correct path to the ViewLecturerPage
+
+
 class SearchDepartmentElec extends StatefulWidget {
   const SearchDepartmentElec({Key? key}) : super(key: key);
 
@@ -21,7 +24,8 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
   bool _showSearchBar = false;
 
   List<Map<String, dynamic>> lecturerData = [
-    {
+    // Your existing lecturer data here
+     {
       'fullName': 'Dr. Thilina Weerasinghe',
       'email': 'john.doe@example.com',
       'imageURL':
@@ -47,6 +51,8 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
     },
     // Add more lecturer data here
   ];
+
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -97,6 +103,20 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
   void _toggleSearchBar() {
     setState(() {
       _showSearchBar = !_showSearchBar;
+    });
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 0) {
+        _navigateToViewElecLecturer();
+      } else if (index == 1) {
+        _navigateToPage2();
+      } else if (index == 2) {
+        // Handle navigation to the home page
+        // For example, Navigator.pushNamed(context, '/home');
+      }
     });
   }
 
@@ -157,7 +177,7 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
                       setState(() {
                         _isButtonHighlighted = true;
                       });
-                      _navigateToViewElecLecturer();
+                      _onItemTapped(0);
                     },
                     style: ElevatedButton.styleFrom(
                       primary: _isButtonHighlighted
@@ -187,7 +207,7 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
                       setState(() {
                         _isButtonHighlighted = false;
                       });
-                      _navigateToPage2();
+                      _onItemTapped(1);
                     },
                     style: ElevatedButton.styleFrom(
                       primary: _isButtonHighlighted
@@ -269,6 +289,26 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
           ),
         ],
       ),
+      bottomNavigationBar: BottomNavigationBar(
+         items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'History',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home Page',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.white,
+        onTap: _onItemTapped,
+        backgroundColor: Colors.cyan[700],
+      ),
     );
   }
 
@@ -279,4 +319,8 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
   void _navigateToPage2() {
     Navigator.pushNamed(context, '/viewElecInstructor');
   }
+
+
+
+
 }

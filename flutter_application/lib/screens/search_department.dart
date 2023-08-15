@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'history_page.dart';
+import 'notification_page.dart';
 
 class SearchDepartment extends StatefulWidget {
   const SearchDepartment({Key? key}) : super(key: key);
@@ -109,7 +111,7 @@ class _SearchDepartmentState extends State<SearchDepartment>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.cyan[700], // Use the same app bar color as in LoginPage
+        backgroundColor: Colors.cyan[700],
         title: Text(
           user != null ? user['fullName'] : '',
           style: const TextStyle(fontSize: 16),
@@ -162,6 +164,39 @@ class _SearchDepartmentState extends State<SearchDepartment>
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Color.fromARGB(255, 38, 118, 140),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
+        currentIndex: 0, // Set the index of the currently selected item here
+        onTap: (index) {
+          // Handle navigation when a bottom navigation bar item is tapped
+          if (index == 0) {
+            Navigator.pushNamed(context, '/historypage'); // Navigate to the HistoryPage
+          } else if (index == 1) {
+            Navigator.pushReplacementNamed(context, '/lechome');
+          } else if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NotificationPage()), // Navigate to the NotificationPage
+            );
+          }
+        },
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'History',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home Page',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
+          ),
+        ],
       ),
     );
   }

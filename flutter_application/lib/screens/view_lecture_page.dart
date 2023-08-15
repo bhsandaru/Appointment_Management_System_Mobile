@@ -28,8 +28,6 @@ class _ViewLecturerPageState extends State<ViewLecturerPage> {
       final parsedUserlec = jsonDecode(storedUserlec);
       setState(() {
         users = parsedUserlec;
-        print(users);
-        print("Lecturer");
       });
     }
   }
@@ -43,15 +41,13 @@ class _ViewLecturerPageState extends State<ViewLecturerPage> {
 
       setState(() {
         user = parsedUser;
-        print(user);
-        print("Sandaru");
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (users.isEmpty || user == null) {
+    if (users == null || user == null) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -74,10 +70,12 @@ class _ViewLecturerPageState extends State<ViewLecturerPage> {
               child: Column(
                 children: [
                   const SizedBox(height: 16),
-                  Image.network(
-                    'https://images.unsplash.com/photo-1620523162656-4f968dca355a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8YmVhdXRpZnVsJTIwZ2lybHN8ZW58MHx8MHx8&w=1000&q=80',
-                    height: 250,
-                    width: 250,
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      'https://media.licdn.com/dms/image/C5603AQHV1uGlMl9ViA/profile-displayphoto-shrink_800_800/0/1593104293459?e=1695859200&v=beta&t=b8-haKHKgiPRzuvgjzGHaXv_QkUXNjCyRprxkxNaAy4',
+                      //'https://images.unsplash.com/photo-1620523162656-4f968dca355a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8YmVhdXRpZnVsJTIwZ2lybHN8ZW58MHx8MHx8&w=1000&q=80',
+                    ),
+                    radius: 125,
                   ),
                 ],
               ),
@@ -181,6 +179,14 @@ class _ViewLecturerPageState extends State<ViewLecturerPage> {
                   onPressed: () {
                     Navigator.pushNamed(context, '/calendar');
                   },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.cyan[500], // Set the background color to cyan
+                    padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 25),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
                   child: const Text('Add Appointment'),
                 ),
               ],
@@ -191,3 +197,4 @@ class _ViewLecturerPageState extends State<ViewLecturerPage> {
     );
   }
 }
+

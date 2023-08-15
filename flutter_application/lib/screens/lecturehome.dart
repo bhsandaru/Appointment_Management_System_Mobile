@@ -4,7 +4,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'loginpage.dart';
 import 'search_department.dart';
-// import 'event_calendar.dart';
+import 'notification_page.dart'; // Import the NotificationPage
+import 'history_page.dart'; // Import the HistoryPage
 
 class LectureHome extends StatefulWidget {
   const LectureHome({Key? key}) : super(key: key);
@@ -94,11 +95,18 @@ class _LectureHomeState extends State<LectureHome> {
     }
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 8, 127, 161),
+        backgroundColor: Color.fromARGB(255, 38, 118, 140),
         title: Text(
           user['fullName'],
           style: const TextStyle(fontSize: 16),
         ),
+        actions: const <Widget>[
+          CircleAvatar(
+            radius: 16,
+            backgroundImage: NetworkImage(
+                'https://img.lovepik.com/element/40128/7461.png_1200.png'), // Replace with your image path
+          ),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -107,7 +115,7 @@ class _LectureHomeState extends State<LectureHome> {
             Container(
               height: 100,
               decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 33, 120, 141),
+                color: Color.fromARGB(255, 59, 184, 218),
               ),
               child: const Center(
                 child: Text(
@@ -123,7 +131,7 @@ class _LectureHomeState extends State<LectureHome> {
             ListTile(
               title: const Padding(
                 padding: EdgeInsets.only(left: 16),
-                child: Text('Acedemic Staff'),
+                child: Text('Search Lecturer'),
               ),
               onTap: () {
                 Navigator.push(
@@ -149,12 +157,6 @@ class _LectureHomeState extends State<LectureHome> {
       ),
       body: Column(
         children: [
-          const Expanded(
-            flex: 1,
-            child: Row(
-              children: [],
-            ),
-          ),
           Expanded(
             flex: 2,
             child: ListView.builder(
@@ -162,38 +164,29 @@ class _LectureHomeState extends State<LectureHome> {
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(3.0),
                     child: Column(
                       children: [
                         // Scheduled Appointments
-                        const SizedBox(height: 20),
+                        const SizedBox(
+                            height: 6), // Adding space above the Chip
                         const Padding(
-                          padding: EdgeInsets.all(8.0),
+                          padding: EdgeInsets.all(1.0),
                           child: Row(
                             children: [
                               Chip(
                                 label: Text('Scheduled Appointments'),
-                                backgroundColor: Color(0xFFE1F4F8),
+                                backgroundColor: Color(0xFFC5ECF1),
                                 labelStyle: TextStyle(fontSize: 16),
                               ),
-                              // if (isStudent)
-                              //   ElevatedButton(
-                              //     onPressed: () {
-                              //       Navigator.pushNamed(
-                              //           context, '/StaffDetailsElec');
-                              //     },
-                              //     child: Text('VIEW'),
-                              //     style: ButtonStyle(
-                              //       backgroundColor:
-                              //           MaterialStateProperty.all<Color>(
-                              //               Color(0xFF46B7C7)),
-                              //     ),
-                              //   ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        // Filtered Appointments
+                        const SizedBox(
+                          height: 10,
+                          width: 25,
+                        ),
+// Filtered Appointments
                         Column(
                           children: [
                             // Appointments where the user is a student and is the maker
@@ -202,18 +195,25 @@ class _LectureHomeState extends State<LectureHome> {
                                     (item['maker'] == user['regNo'] &&
                                         user['role'] == 'Student') &&
                                     item['status'] == 2)
-                                .map((item) => Card(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text('with ${item['seeker']}'),
-                                            Text('Reason: ${item['subject']}'),
-                                            Text('Date: ${item['date']}'),
-                                            Text('Time: ${item['time']}'),
-                                          ],
+                                .map((item) => Container(
+                                      // Wrap the Card with Container
+
+                                      width: 300, // Set the desired width here
+                                      child: Card(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('with ${item['seeker']}'),
+                                              Text(
+                                                  'Reason: ${item['subject']}'),
+                                              Text('Date: ${item['date']}'),
+                                              Text('Time: ${item['time']}'),
+                                            ],
+
+                                          ),
                                         ),
                                       ),
                                     ))
@@ -223,18 +223,24 @@ class _LectureHomeState extends State<LectureHome> {
                                 .where((item) =>
                                     item['seeker'] == user['regNo'] &&
                                     user['role'] == 'Lecturer')
-                                .map((item) => Card(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text('with ${item['maker']}'),
-                                            Text('Reason: ${item['subject']}'),
-                                            Text('Date: ${item['date']}'),
-                                            Text('Time: ${item['time']}'),
-                                          ],
+                                .map((item) => Container(
+                                      // Wrap the Card with Container
+
+                                      width: 300, // Set the desired width here
+                                      child: Card(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('with ${item['maker']}'),
+                                              Text(
+                                                  'Reason: ${item['subject']}'),
+                                              Text('Date: ${item['date']}'),
+                                              Text('Time: ${item['time']}'),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ))
@@ -247,6 +253,42 @@ class _LectureHomeState extends State<LectureHome> {
                 );
               },
             ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: NavigationBar(
+        height: 50,
+        backgroundColor: Color.fromARGB(255, 38, 118, 140),
+        destinations: <Widget>[
+          IconButton(
+            icon: Icon(Icons.history),
+            color: Colors.white,
+            tooltip: 'History',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HistoryPage()), // Navigate to the HistoryPage
+              );
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.home),
+            color: Colors.white,
+            tooltip: 'Home Page',
+            onPressed: () {
+              Navigator.pushNamed(context, '/lechome');
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.notifications),
+            color: Colors.white,
+            tooltip: 'Notifications',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationPage()), // Navigate to the NotificationPage
+              );
+            },
           ),
         ],
       ),

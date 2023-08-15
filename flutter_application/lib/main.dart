@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/screens/history_page.dart';
+import 'package:flutter_application/screens/notification_page.dart';
 import 'screens/LectureHome.dart';
 import 'screens/LoginPage.dart';
 import 'screens/search_department_elec.dart';
@@ -45,7 +47,9 @@ class MyApp extends StatelessWidget {
         '/searchDepartmentElec': (context) => const SearchDepartmentElec(),
         '/viewElecLecturer': (context) => ViewElecLecturer(),
         '/viewLecturerPage': (context) => ViewLecturerPage(),
-        '/viewElecInstructor': (context) => ViewElecInstructors(),
+        '/viewElecInstructor': (context) => viewElecInstructor(),
+        '/notificationPage': (context) => NotificationPage(),
+        '/historyPage': (context) => HistoryPage(),
       },
     );
   }
