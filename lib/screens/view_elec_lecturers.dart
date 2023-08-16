@@ -23,7 +23,7 @@ class _ViewElecLecturerState extends State<ViewElecLecturer> {
   void getUsers() async {
     try {
       final response =
-          await http.get(Uri.parse("http://localhost:8080/api/users/"));
+          await http.get(Uri.parse("http://192.168.197.109:8080/api/users/"));
       if (response.statusCode == 200) {
         setState(() {
           lec = json.decode(response.body);
@@ -70,7 +70,7 @@ class _ViewElecLecturerState extends State<ViewElecLecturer> {
   void getLec(String data) async {
     try {
       final response = await http
-          .get(Uri.parse("http://localhost:8080/api/users/getOne/$data"));
+          .get(Uri.parse("http://192.168.197.109:8080/api/users/getOne/$data"));
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
         // Store user data in local storage

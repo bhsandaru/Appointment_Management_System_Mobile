@@ -4,23 +4,25 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'loginpage.dart';
 import 'search_department.dart';
-//import 'notificationpage.dart';
 import 'event_calendar.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-class LectureHome extends StatefulWidget {
-  const LectureHome({Key? key}) : super(key: key);
+class HistoryPage extends StatefulWidget {
+  const HistoryPage({Key? key}) : super(key: key);
 
   @override
-  _LectureHomeState createState() => _LectureHomeState();
+  _HistoryPageState createState() => _HistoryPageState();
 }
 
-class _LectureHomeState extends State<LectureHome> {
-  dynamic user; // Declaring user as a global variable
+class _HistoryPageState extends State<HistoryPage> {
+  dynamic user;
   List appointments = [];
 
   @override
   void initState() {
     super.initState();
+    initializeDateFormatting('en', null);
     getUser();
     getAppointments();
   }
@@ -34,7 +36,6 @@ class _LectureHomeState extends State<LectureHome> {
 
       setState(() {
         user = parsedUser;
-        print(user);
       });
     }
   }
@@ -88,6 +89,30 @@ class _LectureHomeState extends State<LectureHome> {
 
   bool get isStudent => user != null && user['role'] == 'Student';
 
+  bool isAppointmentBeforeNow(Map<String, dynamic> appointment) {
+    final appointmentDate =
+        DateFormat('EEE dd MMMM', 'en').parse(appointment['date']);
+    final appointmentTime =
+        DateFormat('h:mm a').parse(appointment['time'].trim());
+
+    final now = DateTime.now();
+    final currentDate = DateTime(now.day, now.month);
+    final currentTime = TimeOfDay.fromDateTime(now);
+
+    if (appointmentDate.isBefore(currentDate)) {
+      return true;
+    } else if (appointmentDate.isAtSameMomentAs(currentDate) &&
+        appointmentTime.hour < currentTime.hour) {
+      return true;
+    } else if (appointmentDate.isAtSameMomentAs(currentDate) &&
+        appointmentTime.hour == currentTime.hour &&
+        appointmentTime.minute < currentTime.minute) {
+      return true;
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (user == null) {
@@ -100,20 +125,11 @@ class _LectureHomeState extends State<LectureHome> {
           user['fullName'],
           style: const TextStyle(fontSize: 16),
         ),
-        // actions: [IconButton(
-        //     icon: const Icon(Icons.add_alert),
-        //     tooltip: 'Show AccountPage',
-        //     onPressed: () {
-        //       // ScaffoldMessenger.of(context).showSnackBar(
-        //       //     const SnackBar(content: Text('This is a snackbar')));
-        //     },
-        //   ),],
-
         actions: const <Widget>[
           CircleAvatar(
             radius: 16,
             backgroundImage: NetworkImage(
-                'https://img.lovepik.com/element/40128/7461.png_1200.png'), // Replace with your image path
+                'https://img.lovepik.com/element/40128/7461.png_1200.png'),
           ),
         ],
       ),
@@ -140,18 +156,16 @@ class _LectureHomeState extends State<LectureHome> {
             ListTile(
               title: Padding(
                 padding: const EdgeInsets.only(left: 16),
-                child: Text(user['role'] == 'Lecturer'
-                    ? 'Schedule'
-                    : 'Search Lecturer'),
+                child: Text(isStudent ? 'Search Lecturer' : 'Schedule'),
               ),
               onTap: () {
-                if (user['role'] == 'Student') {
+                if (isStudent) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => const SearchDepartment()),
                   );
-                } else if (user['role'] == 'Lecturer') {
+                } else {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -187,15 +201,13 @@ class _LectureHomeState extends State<LectureHome> {
                     padding: const EdgeInsets.all(3.0),
                     child: Column(
                       children: [
-                        // Scheduled Appointments
-                        const SizedBox(
-                            height: 6), // Adding space above the Chip
+                        const SizedBox(height: 6),
                         const Padding(
                           padding: EdgeInsets.all(1.0),
                           child: Row(
                             children: [
                               Chip(
-                                label: Text('Scheduled Appointments'),
+                                label: Text('History'),
                                 backgroundColor: Color(0xFFC5ECF1),
                                 labelStyle: TextStyle(fontSize: 16),
                               ),
@@ -206,7 +218,6 @@ class _LectureHomeState extends State<LectureHome> {
                           height: 10,
                           width: 25,
                         ),
-// Filtered Appointments
                         Column(
                           children: [
                             // Appointments where the user is a student and is the maker
@@ -214,11 +225,10 @@ class _LectureHomeState extends State<LectureHome> {
                                 .where((item) =>
                                     (item['maker'] == user['regNo'] &&
                                         user['role'] == 'Student') &&
-                                    item['status'] == 2)
+                                    item['status'] == 2 &&
+                                    isAppointmentBeforeNow(item))
                                 .map((item) => Container(
-                                      // Wrap the Card with Container
-
-                                      width: 300, // Set the desired width here
+                                      width: 300,
                                       child: Card(
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
@@ -226,8 +236,7 @@ class _LectureHomeState extends State<LectureHome> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                  'Appointment with ${item['seeker']}'),
+                                              Text('with ${item['seeker']}'),
                                               Text(
                                                   'Reason: ${item['subject']}'),
                                               Text('Date: ${item['date']}'),
@@ -243,10 +252,10 @@ class _LectureHomeState extends State<LectureHome> {
                                 .where((item) =>
                                     item['seeker'] == user['fullName'] &&
                                     user['role'] == 'Lecturer' &&
-                                    item['status'] == 2)
+                                    item['status'] == 2 &&
+                                    isAppointmentBeforeNow(item))
                                 .map((item) => Container(
-                                      // Wrap the Card with Container
-                                      width: 300, // Set the desired width here
+                                      width: 300,
                                       child: Card(
                                         child: Padding(
                                           padding: const EdgeInsets.all(8.0),
@@ -285,7 +294,7 @@ class _LectureHomeState extends State<LectureHome> {
             color: Colors.white,
             tooltip: 'History',
             onPressed: () {
-              Navigator.pushNamed(context, '/historypage');
+              // Navigator.pushNamed(context, '/historypage');
             },
           ),
           IconButton(
@@ -293,7 +302,7 @@ class _LectureHomeState extends State<LectureHome> {
             color: Colors.white,
             tooltip: 'Home Page',
             onPressed: () {
-              // Navigator.pushNamed(context, '/lechome');
+              Navigator.pushNamed(context, '/lechome');
             },
           ),
           IconButton(

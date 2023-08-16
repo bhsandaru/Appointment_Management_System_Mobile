@@ -5,6 +5,8 @@ import 'screens/search_department_elec.dart';
 import 'screens/search_department.dart';
 import 'screens/view_elec_lecturers.dart';
 import 'screens/view_lecture_page.dart';
+import 'screens/notificationpage.dart';
+import 'screens/historypage.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 // import 'package:flutter_application/dbhelper/mongodb.dart';
 // import 'screens/navbar.dart';
@@ -43,7 +45,9 @@ class MyApp extends StatelessWidget {
         '/searchDepartment': (context) => const SearchDepartment(),
         '/searchDepartmentElec': (context) => const SearchDepartmentElec(),
         '/viewElecLecturer': (context) => ViewElecLecturer(),
-        '/viewLecturerPage': (context) => ViewLecturerPage(),
+        '/viewLecturerPage': (context) => const ViewLecturerPage(),
+        '/notificationpage': (context) => const NotificationPage(),
+        '/historypage': (context) => const HistoryPage(),
       },
     );
   }

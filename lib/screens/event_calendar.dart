@@ -1,4 +1,7 @@
 import 'dart:convert';
+// import 'dart:ffi';
+// import 'dart:ffi';
+//import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +22,8 @@ class _TestingState extends State<EventCalendarScreen> {
   String time = '';
   // String maker = '';
   String seeker = '';
+  String status = "1";
+  String category = '';
 
   List<String> subjects = [
     'Advisor Meeting',
@@ -57,7 +62,7 @@ class _TestingState extends State<EventCalendarScreen> {
     if (storedUser != null) {
       final parsedUser = jsonDecode(storedUser);
       setState(() {
-        seeker = parsedUser['User']['regNo'];
+        seeker = parsedUser['User']['fullName'];
       });
     }
   }
@@ -67,15 +72,17 @@ class _TestingState extends State<EventCalendarScreen> {
       final newAppointment = {
         'subject': subject,
         'time': time,
-        'date': DateFormat('EEE dd MMMM')
+        'date': DateFormat('EEE,M/d/y')
             .format(selectedDay), // Use selectedDay instead of selectedDate
         'maker': user['regNo'] ?? '',
         'seeker': seeker,
         'notes': notes,
+        'status': status,
+        'category': category,
       };
 
       final response = await http.post(
-        Uri.parse('http://localhost:8080/api/appointments/add'),
+        Uri.parse('http://192.168.197.109:8080/api/appointments/add'),
         body: jsonEncode(newAppointment),
         headers: {'Content-Type': 'application/json'},
       );
@@ -142,7 +149,7 @@ class _TestingState extends State<EventCalendarScreen> {
   Future<void> fetchAppointments(DateTime date) async {
     final result = await http.get(
       Uri.parse(
-          'http://localhost:8080/api/appointments/get?date=${DateFormat('EEE dd MMMM').format(date)}'),
+          'http://192.168.197.109:8080/api/appointments/get?date=${DateFormat('EEE,M/d/y').format(date)}'),
     );
 
     final data = jsonDecode(result.body);
@@ -229,72 +236,83 @@ class _TestingState extends State<EventCalendarScreen> {
                 }
 
                 return ListTile(
-                  title: Text(formattedTime),
-                  subtitle: Text(matchingAppointments.isNotEmpty
-                      ? matchingAppointments[0]['subject']
-                      : 'Free'),
-                  onTap: () {
-                    if (matchingAppointments.isEmpty && isSelectable) {
-                      setState(() {
-                        time = formattedTime;
-                      });
+                    title: Text(formattedTime),
+                    subtitle: Text(matchingAppointments.isNotEmpty
+                        ? matchingAppointments[0]['subject']
+                        : 'Free'),
+                    onTap: () {
+                      if (matchingAppointments.isEmpty && isSelectable) {
+                        setState(() {
+                          time = formattedTime;
+                        });
 
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Appointment for $formattedTime'),
-                            backgroundColor: Color.fromARGB(255, 253, 255, 255),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text(
-                                    'Please enter the details of your appointment:'),
-                                TextField(
-                                  decoration: const InputDecoration(
-                                      labelText: 'Subject'),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      subject = value;
-                                    });
-                                  },
+                        if (user['role'] == 'Student') {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Appointment for $formattedTime'),
+                                backgroundColor:
+                                    Color.fromARGB(255, 253, 255, 255),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Text(
+                                        'Please enter the details of your appointment:'),
+                                    TextField(
+                                      decoration: const InputDecoration(
+                                          labelText: 'Subject'),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          subject = value;
+                                        });
+                                      },
+                                    ),
+                                    TextField(
+                                      decoration:
+                                          InputDecoration(labelText: 'Notes'),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          notes = value;
+                                        });
+                                      },
+                                    ),
+                                    TextField(
+                                      decoration: const InputDecoration(
+                                          labelText: 'category'),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          category = value;
+                                        });
+                                      },
+                                    ),
+                                  ],
                                 ),
-                                TextField(
-                                  decoration:
-                                      InputDecoration(labelText: 'Notes'),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      notes = value;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  setState(() {
-                                    subject = '';
-                                    notes = '';
-                                  });
-                                },
-                                child: Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  sendData();
-                                },
-                                child: Text('Save'),
-                              ),
-                            ],
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        subject = '';
+                                        notes = '';
+                                      });
+                                    },
+                                    child: Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      sendData();
+                                    },
+                                    child: Text('Save'),
+                                  ),
+                                ],
+                              );
+                            },
                           );
-                        },
-                      );
-                    }
-                  },
-                );
+                        }
+                      }
+                    });
               },
             ),
           ),

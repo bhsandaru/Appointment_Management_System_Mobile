@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -20,8 +18,8 @@ class _LoginPageState extends State<LoginPage> {
   void getUser(BuildContext context, String email) async {
     try {
       // Show loading indicator if necessary
-      final response = await http
-          .get(Uri.parse('http://localhost:8080/api/users/getOne/${email}'));
+      final response = await http.get(
+          Uri.parse('http://192.168.197.109:8080/api/users/getOne/${email}'));
 
       // Hide loading indicator if necessary
 
@@ -56,7 +54,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void handleSubmit(BuildContext context) async {
     try {
-      final url = Uri.parse('http://localhost:8080/api/auth');
+      final url = Uri.parse('http://192.168.197.109:8080/api/auth');
       final headers = {'Content-Type': 'application/json'};
       final body = jsonEncode({
         'email': emailController.text,
@@ -236,7 +234,7 @@ class _LoginPageState extends State<LoginPage> {
 //   void getUser(BuildContext context) async {
 //     try {
 //       final response = await http.get(Uri.parse(
-//           'http://localhost:8080/api/users/getOne/${emailController.text}'));
+//           'http://192.168.197.109:8080/api/users/getOne/${emailController.text}'));
 //       if (response.statusCode == 200) {
 //         final data = jsonDecode(response.body);
 //         final user = data['user'];
@@ -254,7 +252,7 @@ class _LoginPageState extends State<LoginPage> {
 
 //   void handleSubmit(BuildContext context) async {
 //     try {
-//       const url = 'http://localhost:8080/api/auth';
+//       const url = 'http://192.168.197.109:8080/api/auth';
 //       final response = await http.post(Uri.parse(url), body: {
 //         'email': emailController.text,
 //         'password': passwordController.text,
