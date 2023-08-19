@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../config.dart';
 
 class NotificationPage extends StatelessWidget {
   @override

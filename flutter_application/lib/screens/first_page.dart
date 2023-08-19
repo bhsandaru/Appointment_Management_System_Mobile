@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../config.dart';
 
 class FirstPage extends StatefulWidget {
   const FirstPage({Key? key, required this.title}) : super(key: key);

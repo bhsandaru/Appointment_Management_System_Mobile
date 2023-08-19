@@ -9,14 +9,11 @@ import 'screens/view_elec_lecturers.dart';
 import 'screens/view_lecture_page.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'screens/view_elec_instructors.dart';
-// import 'package:flutter_application/dbhelper/mongodb.dart';
-// import 'screens/navbar.dart';
-
 import 'package:flutter_application/screens/event_calendar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-//   //calling database connect when app start inside main()
+   
   runApp(MyApp());
 }
 
@@ -38,6 +35,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false, // Remove the debug banner
       initialRoute: '/',
       routes: {
         '/': (context) => const LoginPage(),
@@ -47,7 +45,7 @@ class MyApp extends StatelessWidget {
         '/searchDepartmentElec': (context) => const SearchDepartmentElec(),
         '/viewElecLecturer': (context) => ViewElecLecturer(),
         '/viewLecturerPage': (context) => ViewLecturerPage(),
-        '/viewElecInstructor': (context) => viewElecInstructor(),
+        '/viewElecInstructor': (context) => ViewElecInstructor(),
         '/notificationPage': (context) => NotificationPage(),
         '/historyPage': (context) => HistoryPage(),
       },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../config.dart';
 
 class ViewElecLecturer extends StatefulWidget {
   @override
@@ -23,7 +24,7 @@ class _ViewElecLecturerState extends State<ViewElecLecturer> {
   void getUsers() async {
     try {
       final response =
-          await http.get(Uri.parse("http://localhost:8080/api/users/"));
+          await http.get(Uri.parse("${AppConfig.apiUrl}/api/users/"));
       if (response.statusCode == 200) {
         setState(() {
           lec = json.decode(response.body);
@@ -70,7 +71,7 @@ class _ViewElecLecturerState extends State<ViewElecLecturer> {
   void getLec(String data) async {
     try {
       final response = await http
-          .get(Uri.parse("http://localhost:8080/api/users/getOne/$data"));
+          .get(Uri.parse("${AppConfig.apiUrl}/api/users/getOne/$data"));
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
         // Store user data in local storage
@@ -112,10 +113,10 @@ class _ViewElecLecturerState extends State<ViewElecLecturer> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 11, 182, 229),
+        backgroundColor: Colors.cyan[700],
         title: Text(
           user['fullName'] ?? '',
-          style: const TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 16),
         ),
       ),
       body: ListView.builder(
@@ -134,12 +135,10 @@ class _ViewElecLecturerState extends State<ViewElecLecturer> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          'https://media.licdn.com/dms/image/C5603AQHV1uGlMl9ViA/profile-displayphoto-shrink_800_800/0/1593104293459?e=1695859200&v=beta&t=b8-haKHKgiPRzuvgjzGHaXv_QkUXNjCyRprxkxNaAy4',
-                        ),
-                        radius: screenHeight * 0.13,
-                      ),
+                       CircleAvatar(
+      radius: 100,
+      backgroundImage: NetworkImage(item['userimage']),
+    ),
                       SizedBox(height: 16),
                       Text(
                         item['fullName'],
@@ -163,6 +162,40 @@ class _ViewElecLecturerState extends State<ViewElecLecturer> {
           }
         },
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'History',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home Page',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
+          ),
+        ],
+        selectedItemColor: Colors.white,
+        onTap: _onItemTapped,
+        currentIndex: 0, // Set the current index accordingly
+        backgroundColor: Colors.cyan[500], // Set the desired bottom navigation bar color
+      ),
     );
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      _navigateToViewElecLecturer();
+    } else if (index == 1) {
+      // Handle navigation to home page
+    } else if (index == 2) {
+      // Handle navigation to notifications
+    }
+  }
+
+  void _navigateToViewElecLecturer() {
+    Navigator.pushNamed(context, '/viewElecLecturer');
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../config.dart';
 
 class BottomNavigationBarExample extends StatefulWidget {
   @override

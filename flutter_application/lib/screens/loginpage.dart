@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../config.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -21,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       // Show loading indicator if necessary
       final response = await http
-          .get(Uri.parse('http://localhost:8080/api/users/getOne/${email}'));
+          .get(Uri.parse('${AppConfig.apiUrl}/api/users/getOne/${email}'));
 
       // Hide loading indicator if necessary
 
@@ -56,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void handleSubmit(BuildContext context) async {
     try {
-      final url = Uri.parse('http://localhost:8080/api/auth');
+      final url = Uri.parse('${AppConfig.apiUrl}/api/auth');
       final headers = {'Content-Type': 'application/json'};
       final body = jsonEncode({
         'email': emailController.text,
@@ -130,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
             ),
-            Expanded(
+            Flexible(
               child: Container(
                 decoration: const BoxDecoration(
                   color: Colors.white,
@@ -236,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
 //   void getUser(BuildContext context) async {
 //     try {
 //       final response = await http.get(Uri.parse(
-//           'http://localhost:8080/api/users/getOne/${emailController.text}'));
+//           '${AppConfig.apiUrl}/api/users/getOne/${emailController.text}'));
 //       if (response.statusCode == 200) {
 //         final data = jsonDecode(response.body);
 //         final user = data['user'];
@@ -254,7 +255,7 @@ class _LoginPageState extends State<LoginPage> {
 
 //   void handleSubmit(BuildContext context) async {
 //     try {
-//       const url = 'http://localhost:8080/api/auth';
+//       const url = '${AppConfig.apiUrl}/api/auth';
 //       final response = await http.post(Uri.parse(url), body: {
 //         'email': emailController.text,
 //         'password': passwordController.text,

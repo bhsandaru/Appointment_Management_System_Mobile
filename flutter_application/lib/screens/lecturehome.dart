@@ -6,6 +6,7 @@ import 'loginpage.dart';
 import 'search_department.dart';
 import 'notification_page.dart'; // Import the NotificationPage
 import 'history_page.dart'; // Import the HistoryPage
+import '../config.dart';
 
 class LectureHome extends StatefulWidget {
   const LectureHome({Key? key}) : super(key: key);
@@ -40,7 +41,7 @@ class _LectureHomeState extends State<LectureHome> {
   }
 
   void getAppointments() {
-    var url = 'http://localhost:8080/api/appointments/';
+    var url = '${AppConfig.apiUrl}/api/appointments/';
     http.get(Uri.parse(url)).then((response) {
       if (response.statusCode == 200) {
         setState(() {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/screens/loginpage.dart';
 import 'package:flutter_application/screens/event_calendar.dart';
+import '../config.dart';
 
 class LectureHome extends StatelessWidget {
   const LectureHome({Key? key}) : super(key: key);

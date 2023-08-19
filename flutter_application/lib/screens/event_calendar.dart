@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:table_calendar/table_calendar.dart';
-
+import '../config.dart';
 class EventCalendarScreen extends StatefulWidget {
   @override
   _TestingState createState() => _TestingState();
@@ -75,7 +75,7 @@ class _TestingState extends State<EventCalendarScreen> {
       };
 
       final response = await http.post(
-        Uri.parse('http://localhost:8080/api/appointments/add'),
+        Uri.parse('${AppConfig.apiUrl}/api/appointments/add'),
         body: jsonEncode(newAppointment),
         headers: {'Content-Type': 'application/json'},
       );
@@ -142,7 +142,7 @@ class _TestingState extends State<EventCalendarScreen> {
   Future<void> fetchAppointments(DateTime date) async {
     final result = await http.get(
       Uri.parse(
-          'http://localhost:8080/api/appointments/get?date=${DateFormat('EEE dd MMMM').format(date)}'),
+          '${AppConfig.apiUrl}/api/appointments/get?date=${DateFormat('EEE dd MMMM').format(date)}'),
     );
 
     final data = jsonDecode(result.body);

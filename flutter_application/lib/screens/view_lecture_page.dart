@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import '../config.dart';
 
 class ViewLecturerPage extends StatefulWidget {
   const ViewLecturerPage({Key? key}) : super(key: key);

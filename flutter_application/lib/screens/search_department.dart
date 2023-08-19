@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'history_page.dart';
-import 'notification_page.dart';
+//import 'history_page.dart';
+//import 'notification_page.dart';
+//import '../config.dart';
 
 class SearchDepartment extends StatefulWidget {
   const SearchDepartment({Key? key}) : super(key: key);
@@ -51,7 +52,7 @@ class _SearchDepartmentState extends State<SearchDepartment>
 
       setState(() {
         user = parsedUser;
-        print(user);
+       // print(user);
       });
     }
   }
@@ -64,8 +65,9 @@ class _SearchDepartmentState extends State<SearchDepartment>
     _animationController.reverse();
   }
 
-  Widget buildDepartmentButton(String departmentName, String routeName, double minWidth) {
-    return Expanded(
+  Widget buildDepartmentButton(String departmentName, String routeName) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Align(
         alignment: Alignment.centerLeft,
         child: InkWell(
@@ -95,7 +97,7 @@ class _SearchDepartmentState extends State<SearchDepartment>
               ),
               borderRadius: BorderRadius.circular(8),
             ),
-            constraints: BoxConstraints(minWidth: minWidth),
+            constraints: BoxConstraints(minWidth: double.infinity),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Text(
               departmentName,
@@ -111,7 +113,7 @@ class _SearchDepartmentState extends State<SearchDepartment>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.cyan[700],
+        backgroundColor: const Color.fromARGB(255, 11, 182, 229),
         title: Text(
           user != null ? user['fullName'] : '',
           style: const TextStyle(fontSize: 16),
@@ -124,80 +126,66 @@ class _SearchDepartmentState extends State<SearchDepartment>
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 35),
+        padding: const EdgeInsets.only(top: 35, left: 8, right: 8),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 16), // Adding 50px vertical spacing
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Chip(
-                  label: const Text(
-                    'Academic Staff',
-                    style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
-                  ),
-                  backgroundColor: const Color.fromARGB(255, 5, 101, 114),
-                  labelStyle: const TextStyle(color: Colors.white),
-                ),
-              ),
+              child: Chip(
+              label: Text('Departments'),
+              backgroundColor: Color(0xFFC5ECF1),
+              labelStyle: TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 15), // Adding 15px vertical spacing
-
+            ),
+            SizedBox(height: 30), // Adding 30px vertical spacing
+            
             buildDepartmentButton(
               'Department of Civil and Environmental Engineering',
-              '/page1',
-              600,
+              '/searchDepartmentCivil',
             ),
-            const SizedBox(height: 15), // Adding 15px vertical spacing
             buildDepartmentButton(
               'Department of Electrical and Environmental Engineering',
               '/searchDepartmentElec',
-              600,
             ),
-            const SizedBox(height: 15), // Adding 15px vertical spacing
             buildDepartmentButton(
               'Department of Mechanical and Manufacturing Engineering',
-              '/page3',
-              600,
+              '/searchDepartmentMech',
             ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: NavigationBar(
+        height: 50,
         backgroundColor: Color.fromARGB(255, 38, 118, 140),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
-        currentIndex: 0, // Set the index of the currently selected item here
-        onTap: (index) {
-          // Handle navigation when a bottom navigation bar item is tapped
-          if (index == 0) {
-            Navigator.pushNamed(context, '/historypage'); // Navigate to the HistoryPage
-          } else if (index == 1) {
-            Navigator.pushReplacementNamed(context, '/lechome');
-          } else if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => NotificationPage()), // Navigate to the NotificationPage
-            );
-          }
-        },
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+        destinations: <Widget>[
+          IconButton(
             icon: Icon(Icons.history),
-            label: 'History',
+            color: Colors.white,
+            tooltip: 'History',
+            onPressed: () {
+              Navigator.pushNamed(context, '/historypage');
+            },
           ),
-          BottomNavigationBarItem(
+          IconButton(
             icon: Icon(Icons.home),
-            label: 'Home Page',
+            color: Colors.white,
+            tooltip: 'Home Page',
+            onPressed: () {
+              Navigator.pushNamed(context, '/lechome');
+            },
           ),
-          BottomNavigationBarItem(
+          IconButton(
             icon: Icon(Icons.notifications),
-            label: 'Notifications',
+            color: Colors.white,
+            tooltip: 'Notifications',
+            onPressed: () {
+              Navigator.pushNamed(context, '/notificationpage');
+            },
           ),
         ],
       ),
     );
   }
-}
+    }

@@ -1,56 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'dart:convert';
+import '../config.dart';
 
-class viewElecInstructor extends StatefulWidget {
+
+class ViewElecInstructor extends StatefulWidget {
   @override
   _ViewElecInstructorState createState() => _ViewElecInstructorState();
 }
 
-class _ViewElecInstructorState extends State<viewElecInstructor> {
-  List<dynamic> lec = [];
-  Map<String, dynamic> users = {};
+class _ViewElecInstructorState extends State<ViewElecInstructor> {
   dynamic user;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    getUsers();
     getUser();
-  }
-
-  void getUsers() async {
-    try {
-      final response =
-          await http.get(Uri.parse("http://localhost:8080/api/users/"));
-      if (response.statusCode == 200) {
-        setState(() {
-          lec = json.decode(response.body);
-        });
-      } else {
-        throw Exception('Failed to fetch data');
-      }
-    } catch (e) {
-      print(e);
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text('Failed to fetch data. Please try again.'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
   }
 
   void getUser() async {
@@ -62,107 +29,117 @@ class _ViewElecInstructorState extends State<viewElecInstructor> {
 
       setState(() {
         user = parsedUser;
-        print(user);
       });
-    }
-  }
-
-  void getLec(String data) async {
-    try {
-      final response = await http
-          .get(Uri.parse("http://localhost:8080/api/users/getOne/$data"));
-      if (response.statusCode == 200) {
-        final userData = json.decode(response.body);
-        // Store user data in local storage
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('Lec', json.encode(userData));
-
-        setState(() {
-          users = userData;
-          Navigator.pushNamed(context, '/viewInstructorPage');
-        });
-      } else {
-        throw Exception('Failed to fetch data');
-      }
-    } catch (e) {
-      print(e);
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Error'),
-            content: Text('Failed to fetch data. Please try again.'),
-            actions: <Widget>[
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 11, 182, 229),
+        backgroundColor: Colors.cyan[700],
         title: Text(
-          user['fullName'] ?? '',
+          user != null ? user['fullName'] : '',
           style: const TextStyle(fontSize: 16),
         ),
       ),
       body: ListView.builder(
-        itemCount: lec.length,
+        itemCount: instructorData.length,
         itemBuilder: (BuildContext context, int index) {
-          final item = lec[index];
-          if (item['role'] == 'Lecturer' &&
-              item['department'] ==
-                  'Department of Electrical and Information Engineering') {
-            return GestureDetector(
-              onTap: () => getLec(item['email']),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          'https://media.licdn.com/dms/image/C5603AQHV1uGlMl9ViA/profile-displayphoto-shrink_800_800/0/1593104293459?e=1695859200&v=beta&t=b8-haKHKgiPRzuvgjzGHaXv_QkUXNjCyRprxkxNaAy4',
-                        ),
-                        radius: screenHeight * 0.13,
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        item['fullName'],
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(item['email']),
-                      ElevatedButton(
-                        onPressed: () => getLec(item['email']),
-                        child: Text('View Details'),
-                      ),
-                    ],
+          final instructor = instructorData[index];
+          return Card(
+            child: SizedBox(
+              width: 250,
+              height: 300,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 8),
+                  CircleAvatar(
+                    radius: 100,
+                    backgroundImage: NetworkImage(instructor['imageURL']),
                   ),
-                ),
+                  ListTile(
+                    title: Text(
+                      instructor['fullName'],
+                      textAlign: TextAlign.center,
+                    ),
+                    subtitle: Text(
+                      instructor['email'],
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Handle view details button click
+                    },
+                    child: Text('View Details'),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.cyan[500],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            );
-          } else {
-            return SizedBox.shrink();
-          }
+            ),
+          );
         },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history),
+            label: 'History',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home Page',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.white,
+        onTap: _onItemTapped,
+        backgroundColor: Colors.cyan[700],
       ),
     );
   }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 0) {
+        // Handle navigation to the history page
+      } else if (index == 1) {
+        // Handle navigation to the home page
+      } else if (index == 2) {
+        // Handle navigation to the notifications page
+      }
+    });
+  }
 }
+
+List<Map<String, dynamic>> instructorData = [
+  {
+    'fullName': 'Instructor 1',
+    'email': 'instructor1@example.com',
+    'imageURL':
+        'https://via.placeholder.com/150', // Replace with actual image URL
+  },
+  {
+    'fullName': 'Instructor 2',
+    'email': 'instructor2@example.com',
+    'imageURL':
+        'https://via.placeholder.com/150', // Replace with actual image URL
+  },
+  // Add more instructor data here
+];
