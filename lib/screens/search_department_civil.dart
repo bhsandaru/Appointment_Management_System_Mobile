@@ -26,9 +26,13 @@ class _SearchDepartmentCivilState extends State<SearchDepartmentCivil>
   int pageshift = 0;
   int state = 0;
 
+  late TextEditingController searchController;
+  String searchQuery = "";
+
   @override
   void initState() {
     super.initState();
+    searchController = TextEditingController();
     getUsers();
     getUser();
 
@@ -46,6 +50,7 @@ class _SearchDepartmentCivilState extends State<SearchDepartmentCivil>
   @override
   void dispose() {
     _animationController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -176,6 +181,15 @@ class _SearchDepartmentCivilState extends State<SearchDepartmentCivil>
           user != null ? user['fullName'] : '',
           style: const TextStyle(fontSize: 16),
         ),
+        actions: <Widget>[
+          AspectRatio(
+            aspectRatio: 1.0, // Set the desired aspect ratio
+            child: CircleAvatar(
+              radius: 100,
+              backgroundImage: NetworkImage(user['userimage']),
+            ),
+          )
+        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -285,7 +299,9 @@ class _SearchDepartmentCivilState extends State<SearchDepartmentCivil>
                   suffixIcon: Icon(Icons.search),
                 ),
                 onChanged: (value) {
-                  // Implement the search functionality here
+                  setState(() {
+                    searchQuery = value;
+                  });
                 },
               ),
             ),
@@ -302,7 +318,10 @@ class _SearchDepartmentCivilState extends State<SearchDepartmentCivil>
                       if (item['role'] == 'Lecturer' &&
                           item['department'] ==
                               'Department of Civil and Environmental Engineering' &&
-                          state == 0) {
+                          state == 0 &&
+                          item['fullName']
+                              .toLowerCase()
+                              .contains(searchQuery.toLowerCase())) {
                         return GestureDetector(
                           onTap: () => getLec(item['email'], 0),
                           child: SizedBox(
@@ -355,7 +374,10 @@ class _SearchDepartmentCivilState extends State<SearchDepartmentCivil>
                       if (item['role'] == 'Instructor' &&
                           item['department'] ==
                               'Department of Civil and Environmental Engineering' &&
-                          state == 1) {
+                          state == 1 &&
+                          item['fullName']
+                              .toLowerCase()
+                              .contains(searchQuery.toLowerCase())) {
                         return GestureDetector(
                           onTap: () => getLec(item['email'], 0),
                           child: SizedBox(

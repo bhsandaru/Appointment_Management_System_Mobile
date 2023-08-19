@@ -23,6 +23,8 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
   bool _showSearchBar = false;
   String searchQuery = "";
 
+  late TextEditingController searchController;
+
   int _selectedIndex = 0;
   int pageshift = 0;
   int state = 0;
@@ -30,6 +32,7 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
   @override
   void initState() {
     super.initState();
+    searchController = TextEditingController();
     getUsers();
     getUser();
 
@@ -47,6 +50,7 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
   @override
   void dispose() {
     _animationController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -177,6 +181,15 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
           user != null ? user['fullName'] : '',
           style: const TextStyle(fontSize: 16),
         ),
+        actions: <Widget>[
+          AspectRatio(
+            aspectRatio: 1.0, // Set the desired aspect ratio
+            child: CircleAvatar(
+              radius: 100,
+              backgroundImage: NetworkImage(user['userimage']),
+            ),
+          )
+        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -305,7 +318,10 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
                       if (item['role'] == 'Lecturer' &&
                           item['department'] ==
                               'Department of Electrical and Information Engineering' &&
-                          state == 0) {
+                          state == 0 &&
+                          item['fullName']
+                              .toLowerCase()
+                              .contains(searchQuery.toLowerCase())) {
                         return GestureDetector(
                           onTap: () => getLec(item['email'], 0),
                           child: SizedBox(
@@ -358,7 +374,10 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
                       if (item['role'] == 'Instructor' &&
                           item['department'] ==
                               'Department of Electrical and Information Engineering' &&
-                          state == 1) {
+                          state == 1 &&
+                          item['fullName']
+                              .toLowerCase()
+                              .contains(searchQuery.toLowerCase())) {
                         return GestureDetector(
                           onTap: () => getLec(item['email'], 0),
                           child: SizedBox(

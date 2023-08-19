@@ -25,10 +25,13 @@ class _SearchDepartmentMechState extends State<SearchDepartmentMech>
   int _selectedIndex = 0;
   int pageshift = 0;
   int state = 0;
+  late TextEditingController searchController;
+  String searchQuery = "";
 
   @override
   void initState() {
     super.initState();
+    searchController = TextEditingController();
     getUsers();
     getUser();
 
@@ -46,6 +49,7 @@ class _SearchDepartmentMechState extends State<SearchDepartmentMech>
   @override
   void dispose() {
     _animationController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -176,6 +180,15 @@ class _SearchDepartmentMechState extends State<SearchDepartmentMech>
           user != null ? user['fullName'] : '',
           style: const TextStyle(fontSize: 16),
         ),
+        actions: <Widget>[
+          AspectRatio(
+            aspectRatio: 1.0, // Set the desired aspect ratio
+            child: CircleAvatar(
+              radius: 100,
+              backgroundImage: NetworkImage(user['userimage']),
+            ),
+          )
+        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -280,12 +293,14 @@ class _SearchDepartmentMechState extends State<SearchDepartmentMech>
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Search...',
                   suffixIcon: Icon(Icons.search),
                 ),
                 onChanged: (value) {
-                  // Implement the search functionality here
+                  setState(() {
+                    searchQuery = value;
+                  });
                 },
               ),
             ),
@@ -302,7 +317,10 @@ class _SearchDepartmentMechState extends State<SearchDepartmentMech>
                       if (item['role'] == 'Lecturer' &&
                           item['department'] ==
                               'Department of Mechanical and Manufacturing Engineering' &&
-                          state == 0) {
+                          state == 0 &&
+                          item['fullName']
+                              .toLowerCase()
+                              .contains(searchQuery.toLowerCase())) {
                         return GestureDetector(
                           onTap: () => getLec(item['email'], 0),
                           child: SizedBox(
@@ -355,7 +373,10 @@ class _SearchDepartmentMechState extends State<SearchDepartmentMech>
                       if (item['role'] == 'Instructor' &&
                           item['department'] ==
                               'Department of Mechanical and Manufacturing Engineering' &&
-                          state == 1) {
+                          state == 1 &&
+                          item['fullName']
+                              .toLowerCase()
+                              .contains(searchQuery.toLowerCase())) {
                         return GestureDetector(
                           onTap: () => getLec(item['email'], 0),
                           child: SizedBox(

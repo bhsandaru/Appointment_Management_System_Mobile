@@ -192,6 +192,15 @@ class _TestingState extends State<EventCalendarScreen> {
           user['fullName'] ?? '',
           style: const TextStyle(fontSize: 16),
         ),
+        actions: <Widget>[
+          AspectRatio(
+            aspectRatio: 1.0, // Set the desired aspect ratio
+            child: CircleAvatar(
+              radius: 100,
+              backgroundImage: NetworkImage(user['userimage']),
+            ),
+          )
+        ],
       ),
       body: Column(
         children: [

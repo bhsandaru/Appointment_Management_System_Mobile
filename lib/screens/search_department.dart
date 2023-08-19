@@ -118,6 +118,15 @@ class _SearchDepartmentState extends State<SearchDepartment>
           user != null ? user['fullName'] : '',
           style: const TextStyle(fontSize: 16),
         ),
+        actions: <Widget>[
+          AspectRatio(
+            aspectRatio: 1.0, // Set the desired aspect ratio
+            child: CircleAvatar(
+              radius: 100,
+              backgroundImage: NetworkImage(user['userimage']),
+            ),
+          )
+        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

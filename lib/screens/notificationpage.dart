@@ -550,12 +550,14 @@ class _NotificationPageState extends State<NotificationPage> {
           user['fullName'],
           style: const TextStyle(fontSize: 16),
         ),
-        actions: const <Widget>[
-          CircleAvatar(
-            radius: 16,
-            backgroundImage: NetworkImage(
-                'https://img.lovepik.com/element/40128/7461.png_1200.png'), // Replace with your image path
-          ),
+        actions: <Widget>[
+          AspectRatio(
+            aspectRatio: 1.0, // Set the desired aspect ratio
+            child: CircleAvatar(
+              radius: 100,
+              backgroundImage: NetworkImage(user['userimage']),
+            ),
+          )
         ],
       ),
       drawer: Drawer(
