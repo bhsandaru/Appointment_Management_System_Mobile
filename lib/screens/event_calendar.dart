@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:table_calendar/table_calendar.dart';
+import '../config.dart';
 
 class EventCalendarScreen extends StatefulWidget {
   @override
@@ -24,6 +25,8 @@ class _TestingState extends State<EventCalendarScreen> {
   String seeker = '';
   String status = "1";
   String category = '';
+
+  String isbooked = " ";
 
   List<String> subjects = [
     'Advisor Meeting',
@@ -43,6 +46,27 @@ class _TestingState extends State<EventCalendarScreen> {
     getUser();
     getSeekerId();
     fetchAppointments(selectedDate);
+  }
+
+  void handleUpdate3(String appointmentId) async {
+    const status = "4";
+    print(user);
+    try {
+      final response = await http.patch(
+        Uri.parse("${AppConfig.apiUrl}/api/appointments/update/$appointmentId"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({"status": status}),
+      );
+
+      if (response.statusCode == 200) {
+        print(response.body); // Handle successful update
+        fetchAppointments(selectedDate); // Refresh the appointments list
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (error) {
+      print("Error: $error");
+    }
   }
 
   void getUser() async {
@@ -82,7 +106,7 @@ class _TestingState extends State<EventCalendarScreen> {
       };
 
       final response = await http.post(
-        Uri.parse('http://192.168.197.109:8080/api/appointments/add'),
+        Uri.parse('${AppConfig.apiUrl}/api/appointments/add'),
         body: jsonEncode(newAppointment),
         headers: {'Content-Type': 'application/json'},
       );
@@ -149,7 +173,7 @@ class _TestingState extends State<EventCalendarScreen> {
   Future<void> fetchAppointments(DateTime date) async {
     final result = await http.get(
       Uri.parse(
-          'http://192.168.197.109:8080/api/appointments/get?date=${DateFormat('EEE,M/d/y').format(date)}'),
+          '${AppConfig.apiUrl}/api/appointments/get?date=${DateFormat('EEE,M/d/y').format(date)}'),
     );
 
     final data = jsonDecode(result.body);
@@ -163,7 +187,7 @@ class _TestingState extends State<EventCalendarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 11, 182, 229),
+        backgroundColor: Color.fromARGB(255, 38, 118, 140),
         title: Text(
           user['fullName'] ?? '',
           style: const TextStyle(fontSize: 16),
@@ -171,39 +195,42 @@ class _TestingState extends State<EventCalendarScreen> {
       ),
       body: Column(
         children: [
-          TableCalendar(
-            firstDay: DateTime.utc(2000),
-            lastDay: DateTime.utc(2100),
-            focusedDay: focusedDay,
-            selectedDayPredicate: (day) {
-              return isSameDay(selectedDay, day);
-            },
-            calendarFormat: calendarFormat,
-            onFormatChanged: (format) {
-              setState(() {
-                calendarFormat = format;
-              });
-            },
-            onPageChanged: (focusedDay) {
-              setState(() {
-                this.focusedDay = focusedDay;
-              });
-              fetchAppointments(focusedDay);
-            },
-            onDaySelected: (selectedDay, focusedDay) {
-              setState(() {
-                this.selectedDay = selectedDay;
-                this.focusedDay = focusedDay;
-              });
-              fetchAppointments(selectedDay);
-            },
+          Container(
+            color: Colors.grey[200],
+            child: TableCalendar(
+              firstDay: DateTime.utc(2000),
+              lastDay: DateTime.utc(2100),
+              focusedDay: focusedDay,
+              selectedDayPredicate: (day) {
+                return isSameDay(selectedDay, day);
+              },
+              calendarFormat: calendarFormat,
+              onFormatChanged: (format) {
+                setState(() {
+                  calendarFormat = format;
+                });
+              },
+              onPageChanged: (focusedDay) {
+                setState(() {
+                  this.focusedDay = focusedDay;
+                });
+                fetchAppointments(focusedDay);
+              },
+              onDaySelected: (selectedDay, focusedDay) {
+                setState(() {
+                  this.selectedDay = selectedDay;
+                  this.focusedDay = focusedDay;
+                });
+                fetchAppointments(selectedDay);
+              },
+            ),
           ),
           const SizedBox(height: 10),
           Expanded(
             child: ListView.builder(
               itemCount: 12,
               itemBuilder: (context, index) {
-                final startTime = TimeOfDay(hour: 8, minute: 30);
+                final startTime = TimeOfDay(hour: 8, minute: 00);
                 final currentTime = startTime.replacing(
                   hour: startTime.hour + (index * 30) ~/ 60,
                   minute: (startTime.minute + (index * 30)) % 60,
@@ -235,11 +262,28 @@ class _TestingState extends State<EventCalendarScreen> {
                   isSelectable = false;
                 }
 
+                // if (matchingAppointments[0]['status'] == 1) {
+                //   isbooked = "Pending...";
+                // } else if (matchingAppointments[0]['status'] == 2) {
+                //   isbooked = matchingAppointments[0]['subject'];
+                // }
+
                 return ListTile(
                     title: Text(formattedTime),
-                    subtitle: Text(matchingAppointments.isNotEmpty
-                        ? matchingAppointments[0]['subject']
-                        : 'Free'),
+                    subtitle: Text(
+                      matchingAppointments.isNotEmpty
+                          ? matchingAppointments[0]['status'] == 1
+                              ? "Pending..."
+                              : matchingAppointments[0]['status'] == 2
+                                  ? matchingAppointments[0]['subject']
+                                  : "free"
+                          : "free",
+                    ),
+                    tileColor: const Color.fromARGB(255, 157, 225, 227),
+                    selectedTileColor: const Color.fromARGB(255, 135, 192, 208),
+                    shape: ContinuousRectangleBorder(
+                      borderRadius: BorderRadius.circular(28.0),
+                    ),
                     onTap: () {
                       if (matchingAppointments.isEmpty && isSelectable) {
                         setState(() {
@@ -253,7 +297,7 @@ class _TestingState extends State<EventCalendarScreen> {
                               return AlertDialog(
                                 title: Text('Appointment for $formattedTime'),
                                 backgroundColor:
-                                    Color.fromARGB(255, 253, 255, 255),
+                                    const Color.fromARGB(255, 253, 255, 255),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -269,8 +313,8 @@ class _TestingState extends State<EventCalendarScreen> {
                                       },
                                     ),
                                     TextField(
-                                      decoration:
-                                          InputDecoration(labelText: 'Notes'),
+                                      decoration: const InputDecoration(
+                                          labelText: 'Notes'),
                                       onChanged: (value) {
                                         setState(() {
                                           notes = value;
@@ -297,15 +341,82 @@ class _TestingState extends State<EventCalendarScreen> {
                                         notes = '';
                                       });
                                     },
-                                    child: Text('Cancel'),
+                                    child: const Text('Cancel'),
                                   ),
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                       sendData();
                                     },
-                                    child: Text('Save'),
+                                    child: const Text('Save'),
                                   ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                        ///////
+                        ///
+                        ///
+                      }
+                      ////////////////////////
+                      ///
+                      if (matchingAppointments.isNotEmpty && isSelectable) {
+                        setState(() {
+                          time = formattedTime;
+                        });
+
+                        if (((user['role'] == 'Lecturer') ||
+                                (user['role'] == 'Instructor')) &&
+                            (matchingAppointments[0]['status']) == 2) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Appointment at $formattedTime'),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 253, 255, 255),
+                                content: const Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                        'Do you want to cancel the appointment?'),
+                                  ],
+                                ),
+                                actions: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      handleUpdate3(
+                                          matchingAppointments[0]['_id']);
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor: MaterialStateProperty
+                                          .all<Color>(const Color.fromARGB(
+                                              255,
+                                              191,
+                                              22,
+                                              10)), // Set the button color to red
+                                    ),
+                                    child: const Text('Yes'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // Navigator.of(context)
+                                      //     .pop();
+                                      // handleUpdate3(
+                                      //     item['_id']);
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor: MaterialStateProperty
+                                          .all<Color>(const Color.fromARGB(
+                                              255,
+                                              9,
+                                              99,
+                                              37)), // Set the button color to red
+                                    ),
+                                    child: const Text('No'),
+                                  )
                                 ],
                               );
                             },
@@ -315,6 +426,36 @@ class _TestingState extends State<EventCalendarScreen> {
                     });
               },
             ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: NavigationBar(
+        height: 50,
+        backgroundColor: const Color.fromARGB(255, 38, 118, 140),
+        destinations: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.history),
+            color: Colors.white,
+            tooltip: 'History',
+            onPressed: () {
+              Navigator.pushNamed(context, '/historypage');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.home),
+            color: Colors.white,
+            tooltip: 'Home Page',
+            onPressed: () {
+              Navigator.pushNamed(context, '/lechome');
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            color: Colors.white,
+            tooltip: 'Notifications',
+            onPressed: () {
+              Navigator.pushNamed(context, '/notificationpage');
+            },
           ),
         ],
       ),

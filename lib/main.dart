@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/screens/search_department_civil.dart';
+import 'package:flutter_application/screens/search_department_mech.dart';
 import 'screens/LectureHome.dart';
 import 'screens/LoginPage.dart';
 import 'screens/search_department_elec.dart';
@@ -43,8 +45,11 @@ class MyApp extends StatelessWidget {
         '/lechome': (context) => const LectureHome(),
         '/calendar': (context) => EventCalendarScreen(),
         '/searchDepartment': (context) => const SearchDepartment(),
+
         '/searchDepartmentElec': (context) => const SearchDepartmentElec(),
-        '/viewElecLecturer': (context) => ViewElecLecturer(),
+        '/searchDepartmentCivil': (context) => const SearchDepartmentCivil(),
+        '/searchDepartmentMech': (context) => const SearchDepartmentMech(),
+        // '/viewElecLecturer': (context) => ViewElecLecturer(),
         '/viewLecturerPage': (context) => const ViewLecturerPage(),
         '/notificationpage': (context) => const NotificationPage(),
         '/historypage': (context) => const HistoryPage(),

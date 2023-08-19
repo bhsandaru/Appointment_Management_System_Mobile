@@ -5,14 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../config.dart';
 //import '../navigationBar.dart'; // Import the NavigationBar widget
 
-class SearchDepartmentElec extends StatefulWidget {
-  const SearchDepartmentElec({Key? key}) : super(key: key);
+class SearchDepartmentCivil extends StatefulWidget {
+  const SearchDepartmentCivil({Key? key}) : super(key: key);
 
   @override
-  _SearchDepartmentElecState createState() => _SearchDepartmentElecState();
+  _SearchDepartmentCivilState createState() => _SearchDepartmentCivilState();
 }
 
-class _SearchDepartmentElecState extends State<SearchDepartmentElec>
+class _SearchDepartmentCivilState extends State<SearchDepartmentCivil>
     with SingleTickerProviderStateMixin {
   List<dynamic> lec = [];
   Map<String, dynamic> users = {};
@@ -21,7 +21,6 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
   late Animation<Color?> _buttonColorAnimation;
   bool _isButtonHighlighted = false;
   bool _showSearchBar = false;
-  String searchQuery = "";
 
   int _selectedIndex = 0;
   int pageshift = 0;
@@ -196,7 +195,7 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
                 children: [
                   const Expanded(
                     child: Text(
-                      'Department of Electrical and Information Engineering',
+                      'Department of Civil and Environmental Engineering',
                       style: TextStyle(
                         fontSize: 16,
                         color: Color.fromARGB(255, 12, 8, 8),
@@ -281,14 +280,12 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Search...',
                   suffixIcon: Icon(Icons.search),
                 ),
                 onChanged: (value) {
-                  setState(() {
-                    searchQuery = value;
-                  });
+                  // Implement the search functionality here
                 },
               ),
             ),
@@ -304,7 +301,7 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
                       final item = lec[index];
                       if (item['role'] == 'Lecturer' &&
                           item['department'] ==
-                              'Department of Electrical and Information Engineering' &&
+                              'Department of Civil and Environmental Engineering' &&
                           state == 0) {
                         return GestureDetector(
                           onTap: () => getLec(item['email'], 0),
@@ -357,7 +354,7 @@ class _SearchDepartmentElecState extends State<SearchDepartmentElec>
                       }
                       if (item['role'] == 'Instructor' &&
                           item['department'] ==
-                              'Department of Electrical and Information Engineering' &&
+                              'Department of Civil and Environmental Engineering' &&
                           state == 1) {
                         return GestureDetector(
                           onTap: () => getLec(item['email'], 0),

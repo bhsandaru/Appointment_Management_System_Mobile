@@ -7,6 +7,7 @@ import 'search_department.dart';
 import 'event_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import '../config.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({Key? key}) : super(key: key);
@@ -41,7 +42,7 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   void getAppointments() {
-    var url = 'http://192.168.197.109:8080/api/appointments/';
+    var url = '${AppConfig.apiUrl}/api/appointments/';
     http.get(Uri.parse(url)).then((response) {
       if (response.statusCode == 200) {
         setState(() {
@@ -89,28 +90,63 @@ class _HistoryPageState extends State<HistoryPage> {
 
   bool get isStudent => user != null && user['role'] == 'Student';
 
-  bool isAppointmentBeforeNow(Map<String, dynamic> appointment) {
-    final appointmentDate =
-        DateFormat('EEE dd MMMM', 'en').parse(appointment['date']);
-    final appointmentTime =
-        DateFormat('h:mm a').parse(appointment['time'].trim());
+  // bool isAppointmentBeforeNow(Map<String, dynamic> appointments) {
+  //   final now = DateTime.now();
 
-    final now = DateTime.now();
-    final currentDate = DateTime(now.day, now.month);
-    final currentTime = TimeOfDay.fromDateTime(now);
+  //   final appointmentDate = appointments['date'];
+  //   final appointmentTime = appointments['time'];
+  //   print("Heidi");
 
-    if (appointmentDate.isBefore(currentDate)) {
-      return true;
-    } else if (appointmentDate.isAtSameMomentAs(currentDate) &&
-        appointmentTime.hour < currentTime.hour) {
-      return true;
-    } else if (appointmentDate.isAtSameMomentAs(currentDate) &&
-        appointmentTime.hour == currentTime.hour &&
-        appointmentTime.minute < currentTime.minute) {
-      return true;
+  //   final appointmentDateTime =
+  //       parseAppointmentDateTime(appointmentDate, appointmentTime);
+  //   print(appointmentDate);
+  //   return appointmentDateTime.isBefore(now);
+  // }
+
+  bool isAppointmentBeforeNow(Map<String, dynamic> appointments) {
+    if (appointments.containsKey('date') && appointments.containsKey('time')) {
+      final appointmentDate = appointments['date'];
+      final appointmentTime = appointments['time'];
+
+      final appointmentDateTime =
+          parseAppointmentDateTime(appointmentDate, appointmentTime);
+
+      final now = DateTime.now();
+
+      final currentDate =
+          DateTime(now.year, now.month, now.day); // Fix: include year
+      final currentTime = TimeOfDay.fromDateTime(now);
+
+      if (appointmentDateTime.isBefore(currentDate)) {
+        return true;
+      } else if (appointmentDateTime.isAtSameMomentAs(currentDate) &&
+          appointmentDateTime.hour < currentTime.hour) {
+        return true;
+      } else if (appointmentDateTime.isAtSameMomentAs(currentDate) &&
+          appointmentDateTime.hour == currentTime.hour &&
+          appointmentDateTime.minute < currentTime.minute) {
+        return true;
+      }
     }
 
     return false;
+  }
+
+  DateTime parseAppointmentDateTime(String date, String time) {
+    try {
+      final dateTimeString = '$date $time';
+      // Adjust format based on example formats you provided
+      final formats = ['EEE,MM/dd/yyyy h:mm a', 'EEE dd MMMM \'at\' HH'];
+      for (final format in formats) {
+        final dateTime = DateFormat(format, 'en').parse(dateTimeString, true);
+        if (dateTime != null) {
+          return dateTime;
+        }
+      }
+      return DateTime(2000, 1, 1); // Default date
+    } catch (e) {
+      return DateTime(2000, 1, 1); // Default date
+    }
   }
 
   @override
@@ -138,9 +174,9 @@ class _HistoryPageState extends State<HistoryPage> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             Container(
-              height: 100,
+              height: 130,
               decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 59, 184, 218),
+                color: Color.fromARGB(255, 38, 118, 140),
               ),
               child: const Center(
                 child: Text(
@@ -290,7 +326,7 @@ class _HistoryPageState extends State<HistoryPage> {
         backgroundColor: Color.fromARGB(255, 38, 118, 140),
         destinations: <Widget>[
           IconButton(
-            icon: Icon(Icons.history),
+            icon: const Icon(Icons.history),
             color: Colors.white,
             tooltip: 'History',
             onPressed: () {
@@ -298,7 +334,7 @@ class _HistoryPageState extends State<HistoryPage> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.home),
+            icon: const Icon(Icons.home),
             color: Colors.white,
             tooltip: 'Home Page',
             onPressed: () {
@@ -306,7 +342,7 @@ class _HistoryPageState extends State<HistoryPage> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.notifications),
+            icon: const Icon(Icons.notifications),
             color: Colors.white,
             tooltip: 'Notifications',
             onPressed: () {

@@ -6,6 +6,7 @@ import 'loginpage.dart';
 import 'search_department.dart';
 //import 'notificationpage.dart';
 import 'event_calendar.dart';
+import '../config.dart';
 
 class LectureHome extends StatefulWidget {
   const LectureHome({Key? key}) : super(key: key);
@@ -40,7 +41,7 @@ class _LectureHomeState extends State<LectureHome> {
   }
 
   void getAppointments() {
-    var url = 'http://192.168.197.109:8080/api/appointments/';
+    var url = '${AppConfig.apiUrl}/api/appointments/';
     http.get(Uri.parse(url)).then((response) {
       if (response.statusCode == 200) {
         setState(() {
@@ -109,12 +110,14 @@ class _LectureHomeState extends State<LectureHome> {
         //     },
         //   ),],
 
-        actions: const <Widget>[
-          CircleAvatar(
-            radius: 16,
-            backgroundImage: NetworkImage(
-                'https://img.lovepik.com/element/40128/7461.png_1200.png'), // Replace with your image path
-          ),
+        actions: <Widget>[
+          AspectRatio(
+            aspectRatio: 1.0, // Set the desired aspect ratio
+            child: CircleAvatar(
+              radius: 100,
+              backgroundImage: NetworkImage(user['userimage']),
+            ),
+          )
         ],
       ),
       drawer: Drawer(
@@ -122,9 +125,9 @@ class _LectureHomeState extends State<LectureHome> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             Container(
-              height: 100,
+              height: 130,
               decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 59, 184, 218),
+                color: Color.fromARGB(255, 38, 118, 140),
               ),
               child: const Center(
                 child: Text(

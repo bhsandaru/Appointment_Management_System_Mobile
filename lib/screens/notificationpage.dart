@@ -46,7 +46,7 @@
 //     };
 
 //     final response = await http.put(
-//       Uri.parse('http://192.168.197.109:8080/api/appointments//update/:id'),
+//       Uri.parse('${AppConfig.apiUrl}/api/appointments//update/:id'),
 //       body: jsonEncode(updatedData),
 //       headers: {'Content-Type': 'application/json'},
 //     );
@@ -111,7 +111,7 @@
 // }
 
 //   void getAppointments() {
-//     var url = 'http://192.168.197.109:8080/api/appointments/';
+//     var url = '${AppConfig.apiUrl}/api/appointments/';
 //     http.get(Uri.parse(url)).then((response) {
 //       if (response.statusCode == 200) {
 //         setState(() {
@@ -404,6 +404,7 @@ import 'loginpage.dart';
 import 'search_department.dart';
 import 'event_calendar.dart';
 import 'package:http/http.dart' as http;
+import '../config.dart';
 
 class Appointment {
   String id; // Make the id property nullable
@@ -453,8 +454,7 @@ class _NotificationPageState extends State<NotificationPage> {
     print(user);
     try {
       final response = await http.patch(
-        Uri.parse(
-            "http://192.168.197.109:8080/api/appointments/update/$appointmentId"),
+        Uri.parse("${AppConfig.apiUrl}/api/appointments/update/$appointmentId"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"status": status}),
       );
@@ -475,8 +475,7 @@ class _NotificationPageState extends State<NotificationPage> {
     print(user);
     try {
       final response = await http.patch(
-        Uri.parse(
-            "http://192.168.197.109:8080/api/appointments/update/$appointmentId"),
+        Uri.parse("${AppConfig.apiUrl}/api/appointments/update/$appointmentId"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"status": status}),
       );
@@ -493,7 +492,7 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   void getAppointments() {
-    var url = 'http://192.168.197.109:8080/api/appointments/';
+    var url = '${AppConfig.apiUrl}/api/appointments/';
     http.get(Uri.parse(url)).then((response) {
       if (response.statusCode == 200) {
         setState(() {
@@ -564,9 +563,9 @@ class _NotificationPageState extends State<NotificationPage> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             Container(
-              height: 100,
+              height: 130,
               decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 59, 184, 218),
+                color: Color.fromARGB(255, 38, 118, 140),
               ),
               child: const Center(
                 child: Text(
@@ -729,7 +728,8 @@ class _NotificationPageState extends State<NotificationPage> {
                                                       backgroundColor:
                                                           MaterialStateProperty.all<
                                                                   Color>(
-                                                              Color.fromARGB(
+                                                              const Color
+                                                                  .fromARGB(
                                                                   255,
                                                                   9,
                                                                   99,
@@ -747,12 +747,13 @@ class _NotificationPageState extends State<NotificationPage> {
                                                     style: ButtonStyle(
                                                       backgroundColor:
                                                           MaterialStateProperty.all<
-                                                              Color>(const Color
+                                                                  Color>(
+                                                              const Color
                                                                   .fromARGB(
-                                                              255,
-                                                              191,
-                                                              22,
-                                                              10)), // Set the button color to red
+                                                                  255,
+                                                                  191,
+                                                                  22,
+                                                                  10)), // Set the button color to red
                                                     ),
                                                     child: const Text('Reject'),
                                                   )

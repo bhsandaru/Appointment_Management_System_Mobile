@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
 
-class NavBar extends StatelessWidget {
-  const NavBar({super.key});
+// class NavBar extends StatelessWidget {
+//   const NavBar({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Drawer();
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Drawer();
+//   }
+// }

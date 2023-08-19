@@ -4,12 +4,12 @@
 // import 'package:shared_preferences/shared_preferences.dart';
 // import '../config.dart';
 
-// class ViewElecLecturer extends StatefulWidget {
+// class ViewCivilLecturer extends StatefulWidget {
 //   @override
-//   _ViewElecLecturerState createState() => _ViewElecLecturerState();
+//   _ViewCivilLecturerState createState() => _ViewCivilLecturerState();
 // }
 
-// class _ViewElecLecturerState extends State<ViewElecLecturer> {
+// class _ViewCivilLecturerState extends State<ViewCivilLecturer> {
 //   List<dynamic> lec = [];
 //   Map<String, dynamic> users = {};
 //   dynamic user;
@@ -123,7 +123,7 @@
 //           final item = lec[index];
 //           if (item['role'] == 'Lecturer' &&
 //               item['department'] ==
-//                   'Department of Electrical and Information Engineering') {
+//                   'Department of Civil and Environmental Engineering') {
 //             return GestureDetector(
 //                 onTap: () => getLec(item['email']),
 //                 child: Center(
